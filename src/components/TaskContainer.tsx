@@ -71,6 +71,15 @@ export default function TaskContainer({
     });
   }
 
+  function updateTask(id: Id, content: string) {
+    setTasks((prev) =>
+      prev.map((task) => {
+        if (task.id !== id) return task;
+        return { ...task, content };
+      }),
+    );
+  }
+
   return (
     <article
       ref={setNodeRef}
@@ -87,7 +96,7 @@ export default function TaskContainer({
             aria-label="0 tasks"
             className="flex size-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
           >
-            0
+            {tasks.length}
           </span>
 
           <h2
@@ -138,7 +147,12 @@ export default function TaskContainer({
       >
         <ul className="flex w-full flex-1 min-h-0 flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-xl border border-dashed border-slate-200 bg-slate-50 p-1 text-sm">
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} deleteTask={deleteTask} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
+            />
           ))}
         </ul>
       </section>
