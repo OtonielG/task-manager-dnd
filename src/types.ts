@@ -4,3 +4,8 @@ export interface Column {
   id: Id;
   title: string;
 }
+
+export interface Task {
+  id: Id;
+  content: string;
+}

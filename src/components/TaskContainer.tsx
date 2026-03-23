@@ -1,8 +1,10 @@
-import type { Column, Id } from "../types";
+import type { Column, Id, Task } from "../types";
 import DeleteIcon from "../assets/deleteIcon.svg?react";
+import PlusIcon from "../assets/plusIcon.svg?react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
+import TaskCard from "./TaskCard";
 
 interface Props {
   column: Column;
@@ -16,6 +18,7 @@ export default function TaskContainer({
   updateColumn,
 }: Props) {
   const [editTitle, setEditTitle] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   const {
     setNodeRef,
@@ -46,6 +49,26 @@ export default function TaskContainer({
         className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border-2 border-violet-400 bg-white shadow-sm"
       ></article>
     );
+  }
+
+  function createTask() {
+    const NewTask: Task = {
+      id: crypto.randomUUID(),
+      content: `Task ${tasks.length + 1}`,
+    };
+
+    setTasks((prev) => {
+      return [...prev, NewTask];
+    });
+
+    console.log(tasks);
+  }
+
+  function deleteTask(id: Id) {
+    setTasks((prev) => {
+      const filteredTasks = prev.filter((task) => task.id !== id);
+      return filteredTasks;
+    });
   }
 
   return (
@@ -103,7 +126,7 @@ export default function TaskContainer({
           type="button"
           onClick={() => deleteColumn(column.id)}
           aria-label={`Delete ${column.title}`}
-          className="flex size-9 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-violet-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 cursor-pointer"
+          className="flex size-9 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-violet-300 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 cursor-pointer"
         >
           <DeleteIcon className="size-5" aria-hidden="true" />
         </button>
@@ -111,15 +134,23 @@ export default function TaskContainer({
 
       <section
         aria-label={`Tasks in ${column.title}`}
-        className="flex flex-1 px-4 py-4"
+        className="flex flex-1 min-h-0 px-4 py-4"
       >
-        <div className="flex w-full items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-400">
-          Content
-        </div>
+        <ul className="flex w-full flex-1 min-h-0 flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-xl border border-dashed border-slate-200 bg-slate-50 p-1 text-sm">
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} deleteTask={deleteTask} />
+          ))}
+        </ul>
       </section>
 
       <footer className="border-t border-slate-100 px-4 py-3 text-sm text-slate-500">
-        Footer
+        <button
+          onClick={createTask}
+          className="h-full flex items-center gap-2 hover:text-violet-600 cursor-pointer"
+        >
+          <PlusIcon className="size-8" />
+          <span>Add Task</span>
+        </button>
       </footer>
     </article>
   );
