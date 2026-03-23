@@ -2,6 +2,8 @@ import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ProjectsArea from "./components/ProjectsArea";
 import type { Column, Id } from "./types";
+import { arrayMove } from "@dnd-kit/sortable";
+import type { UniqueIdentifier } from "@dnd-kit/core";
 
 function App() {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -19,11 +21,23 @@ function App() {
     setColumns((prev) => prev.filter((column) => column.id !== id));
   }
 
+  function handleChange(activeId: UniqueIdentifier, overId: UniqueIdentifier) {
+    setColumns((prev) => {
+      const activeColumnIndex = prev.findIndex((col) => col.id === activeId);
+      const overColumnIndex = prev.findIndex((col) => col.id === overId);
+      return arrayMove(prev, activeColumnIndex, overColumnIndex);
+    });
+  }
+
   return (
     <div className="flex h-dvh w-full flex-col bg-slate-50">
       <Navbar onAddProject={createColumn} />
       <div className="flex-1 flex items-center">
-        <ProjectsArea columns={columns} deleteColumn={deleteColumn} />
+        <ProjectsArea
+          columns={columns}
+          deleteColumn={deleteColumn}
+          handleChange={handleChange}
+        />
       </div>
     </div>
   );

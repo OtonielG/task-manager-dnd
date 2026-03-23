@@ -1,5 +1,7 @@
 import type { Column, Id } from "../types";
 import DeleteIcon from "../assets/deleteIcon.svg?react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   column: Column;
@@ -7,9 +9,47 @@ interface Props {
 }
 
 export default function TaskContainer({ column, deleteColumn }: Props) {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    },
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  if (isDragging) {
+    return (
+      <article
+        ref={setNodeRef}
+        style={style}
+        className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border-2 border-violet-400 bg-white shadow-sm"
+      ></article>
+    );
+  }
+
   return (
-    <article className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <header className="flex items-center justify-between rounded-t-2xl border-b border-violet-100 bg-violet-50 px-4 py-3">
+    <article
+      ref={setNodeRef}
+      style={style}
+      className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
+    >
+      <header
+        {...attributes}
+        {...listeners}
+        className="flex items-center justify-between rounded-t-2xl border-b border-violet-100 bg-violet-50 px-4 py-3 active:cursor-grab"
+      >
         <div className="flex min-w-0 items-center gap-3">
           <span
             aria-label="0 tasks"
