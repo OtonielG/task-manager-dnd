@@ -21,12 +21,14 @@ type ProjectsAreaProps = {
   columns: Column[];
   deleteColumn: (id: Id) => void;
   handleChange: (activeId: UniqueIdentifier, overId: UniqueIdentifier) => void;
+  updateColumn: (id: Id, title: string) => void;
 };
 
 export default function ProjectsArea({
   columns,
   deleteColumn,
   handleChange,
+  updateColumn,
 }: ProjectsAreaProps) {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -89,7 +91,11 @@ export default function ProjectsArea({
             >
               {columns.map((column) => (
                 <li key={column.id} className="shrink-0">
-                  <TaskContainer column={column} deleteColumn={deleteColumn} />
+                  <TaskContainer
+                    column={column}
+                    deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
+                  />
                 </li>
               ))}
             </ul>
@@ -98,7 +104,11 @@ export default function ProjectsArea({
 
         <DragOverlay>
           {activeColumn ? (
-            <TaskContainer column={activeColumn} deleteColumn={deleteColumn} />
+            <TaskContainer
+              column={activeColumn}
+              deleteColumn={deleteColumn}
+              updateColumn={updateColumn}
+            />
           ) : null}
         </DragOverlay>
       </DndContext>

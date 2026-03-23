@@ -21,6 +21,18 @@ function App() {
     setColumns((prev) => prev.filter((column) => column.id !== id));
   }
 
+  function updateColumn(id: Id, title: string) {
+    setColumns((prev) => {
+      const newColumns = prev.map((col) => {
+        if (col.id !== id) return col;
+
+        return { ...col, title };
+      });
+
+      return newColumns;
+    });
+  }
+
   function handleChange(activeId: UniqueIdentifier, overId: UniqueIdentifier) {
     setColumns((prev) => {
       const activeColumnIndex = prev.findIndex((col) => col.id === activeId);
@@ -37,6 +49,7 @@ function App() {
           columns={columns}
           deleteColumn={deleteColumn}
           handleChange={handleChange}
+          updateColumn={updateColumn}
         />
       </div>
     </div>

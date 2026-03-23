@@ -2,13 +2,21 @@ import type { Column, Id } from "../types";
 import DeleteIcon from "../assets/deleteIcon.svg?react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
 
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
+  updateColumn: (id: Id, title: string) => void;
 }
 
-export default function TaskContainer({ column, deleteColumn }: Props) {
+export default function TaskContainer({
+  column,
+  deleteColumn,
+  updateColumn,
+}: Props) {
+  const [editTitle, setEditTitle] = useState(false);
+
   const {
     setNodeRef,
     attributes,
@@ -22,6 +30,7 @@ export default function TaskContainer({ column, deleteColumn }: Props) {
       type: "Column",
       column,
     },
+    disabled: editTitle,
   });
 
   const style = {
@@ -48,9 +57,9 @@ export default function TaskContainer({ column, deleteColumn }: Props) {
       <header
         {...attributes}
         {...listeners}
-        className="flex items-center justify-between rounded-t-2xl border-b border-violet-100 bg-violet-50 px-4 py-3 active:cursor-grab"
+        className="flex items-center justify-between w-full rounded-t-2xl border-b border-violet-100 bg-violet-50 px-4 py-3 active:cursor-grab"
       >
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex-1 flex min-w-0 items-center gap-3">
           <span
             aria-label="0 tasks"
             className="flex size-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
@@ -58,8 +67,35 @@ export default function TaskContainer({ column, deleteColumn }: Props) {
             0
           </span>
 
-          <h2 className="truncate text-base font-semibold text-slate-900">
-            {column.title}
+          <h2
+            onClick={() => setEditTitle(true)}
+            className="flex-1 truncate text-base font-semibold text-slate-900 cursor-text"
+          >
+            {!editTitle ? (
+              column.title || "Untitled list"
+            ) : (
+              <input
+                value={column.title}
+                onChange={(e) => updateColumn(column.id, e.target.value)}
+                onBlur={() => {
+                  if (!column.title.trim()) {
+                    updateColumn(column.id, "Untitled list");
+                  }
+                  setEditTitle(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+
+                  if (!column.title.trim()) {
+                    updateColumn(column.id, "Untitled list");
+                  }
+
+                  setEditTitle(false);
+                }}
+                autoFocus
+                className="w-full rounded-md border border-violet-200 bg-white px-2 py-1 text-base font-semibold text-slate-900 outline-none focus:border-violet-400"
+              />
+            )}
           </h2>
         </div>
 
