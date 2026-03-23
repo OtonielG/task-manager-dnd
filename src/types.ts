@@ -1,9 +1,10 @@
 export type Id = string;
 
-export interface Column {
+export type Column = {
   id: Id;
   title: string;
-}
+  createdAt: number;
+};
 
 export interface Task {
   id: Id;

@@ -5,17 +5,21 @@ import type { Column, Id } from "./types";
 import { arrayMove } from "@dnd-kit/sortable";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 
+export type SortValue = "manual" | "az" | "za" | "newest" | "oldest";
+
 function App() {
-  const [columns, setColumns] = useState<Column[]>([
-    { id: crypto.randomUUID(), title: "List 1" },
+  const [columns, setColumns] = useState<Column[]>(() => [
+    { id: crypto.randomUUID(), title: "List 1", createdAt: Date.now() },
   ]);
 
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<SortValue>("manual");
 
   function createColumn() {
     const newColumn: Column = {
       id: crypto.randomUUID(),
       title: `List ${columns.length + 1}`,
+      createdAt: Date.now(),
     };
 
     setColumns((prev) => [...prev, newColumn]);
@@ -45,10 +49,32 @@ function App() {
   }
 
   const filteredColumns = useMemo(() => {
-    return columns.filter((column) =>
+    const filtered = columns.filter((column) =>
       column.title.toLowerCase().includes(search.toLowerCase().trim()),
     );
-  }, [columns, search]);
+
+    if (sort === "manual") return filtered;
+
+    const sorted = [...filtered];
+
+    if (sort === "az") {
+      return sorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    if (sort === "za") {
+      return sorted.sort((a, b) => b.title.localeCompare(a.title));
+    }
+
+    if (sort === "newest") {
+      return sorted.sort((a, b) => b.createdAt - a.createdAt);
+    }
+
+    if (sort === "oldest") {
+      return sorted.sort((a, b) => a.createdAt - b.createdAt);
+    }
+
+    return filtered;
+  }, [columns, search, sort]);
 
   return (
     <div className="flex h-dvh w-full flex-col bg-slate-50">
@@ -64,6 +90,8 @@ function App() {
           deleteColumn={deleteColumn}
           handleChange={handleChange}
           updateColumn={updateColumn}
+          sort={sort}
+          onSortChange={setSort}
         />
       </div>
     </div>

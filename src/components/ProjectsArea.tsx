@@ -16,12 +16,28 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { UniqueIdentifier } from "@dnd-kit/core";
+import type { SortValue } from "../App";
+
+type SortOption = {
+  label: string;
+  value: SortValue;
+};
+
+const sortOptions: SortOption[] = [
+  { label: "Manual", value: "manual" },
+  { label: "A-Z", value: "az" },
+  { label: "Z-A", value: "za" },
+  { label: "Newest", value: "newest" },
+  { label: "Oldest", value: "oldest" },
+];
 
 type ProjectsAreaProps = {
   columns: Column[];
   deleteColumn: (id: Id) => void;
   handleChange: (activeId: UniqueIdentifier, overId: UniqueIdentifier) => void;
   updateColumn: (id: Id, title: string) => void;
+  sort: SortValue;
+  onSortChange: (value: SortValue) => void;
 };
 
 export default function ProjectsArea({
@@ -29,6 +45,8 @@ export default function ProjectsArea({
   deleteColumn,
   handleChange,
   updateColumn,
+  sort,
+  onSortChange,
 }: ProjectsAreaProps) {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -69,16 +87,37 @@ export default function ProjectsArea({
           aria-labelledby="board-heading"
           className="flex h-full flex-col rounded-3xl border border-slate-200 bg-white/70 p-4 shadow-sm backdrop-blur-sm sm:p-6"
         >
-          <div className="mb-5 flex flex-col gap-1">
-            <h1
-              id="board-heading"
-              className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"
-            >
-              Project Board
-            </h1>
-            <p className="text-sm text-slate-600">
-              Organize your workflow by creating and managing columns.
-            </p>
+          <div className="mb-5 flex flex-col gap-4 md:flex-row md:justify-between">
+            <div className="flex flex-col gap-1">
+              <h1
+                id="board-heading"
+                className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"
+              >
+                Project Board
+              </h1>
+              <p className="text-sm text-slate-600">
+                Organize your workflow by creating and managing columns.
+              </p>
+            </div>
+            <div className="">
+              <ul className="flex flex-wrap md:flex-nowrap justify-start md:justify-end gap-2">
+                {sortOptions.map((option) => (
+                  <li key={option.label}>
+                    <button
+                      type="button"
+                      onClick={() => onSortChange(option.value)}
+                      className={`w-fit flex text-nowrap items-center gap-2 rounded-full border px-4 py-1 text-sm transition-colors cursor-pointer ${
+                        sort === option.value
+                          ? "border-violet-500 bg-violet-500 text-white"
+                          : "border-violet-500/30 bg-violet-500/10 text-violet-400"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <SortableContext
