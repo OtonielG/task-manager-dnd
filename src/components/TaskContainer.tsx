@@ -80,6 +80,14 @@ export default function TaskContainer({
     );
   }
 
+  function formatCreatedAt(createdAt: number) {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(createdAt));
+  }
+
   return (
     <article
       ref={setNodeRef}
@@ -157,7 +165,7 @@ export default function TaskContainer({
         </ul>
       </section>
 
-      <footer className="border-t border-slate-100 px-4 py-3 text-sm text-slate-500">
+      <footer className="flex justify-between items-center border-t border-slate-100 px-4 py-3 text-sm text-slate-500">
         <button
           onClick={createTask}
           className="h-full flex items-center gap-2 hover:text-violet-600 cursor-pointer"
@@ -165,6 +173,7 @@ export default function TaskContainer({
           <PlusIcon className="size-8" />
           <span>Add Task</span>
         </button>
+        <span>{formatCreatedAt(column.createdAt)}</span>
       </footer>
     </article>
   );
