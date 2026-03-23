@@ -46,7 +46,7 @@ export default function TaskContainer({
       <article
         ref={setNodeRef}
         style={style}
-        className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border-2 border-violet-400 bg-white shadow-sm"
+        className="flex h-125 max-h-125 w-80 flex-col rounded-2xl border-2 border-violet-400 bg-white shadow-sm"
       ></article>
     );
   }
@@ -84,7 +84,7 @@ export default function TaskContainer({
     <article
       ref={setNodeRef}
       style={style}
-      className="flex h-96 max-h-96 w-80 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
+      className="flex h-125 max-h-125 w-80 flex-col rounded-2xl border border-slate-200 bg-white shadow-sm"
     >
       <header
         {...attributes}

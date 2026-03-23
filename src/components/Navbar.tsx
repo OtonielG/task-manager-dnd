@@ -3,9 +3,15 @@ import SearchIcon from "../assets/searchIcon.svg?react";
 
 type NavbarProps = {
   onAddProject: () => void;
+  search: string;
+  onSearchChange: (value: string) => void;
 };
 
-export default function Navbar({ onAddProject }: NavbarProps) {
+export default function Navbar({
+  onAddProject,
+  search,
+  onSearchChange,
+}: NavbarProps) {
   return (
     <header className="px-4 py-4 sm:px-6">
       <nav
@@ -34,7 +40,7 @@ export default function Navbar({ onAddProject }: NavbarProps) {
             onSubmit={(e) => e.preventDefault()}
           >
             <label htmlFor="project-search" className="sr-only">
-              Search projects
+              Search list
             </label>
 
             <div className="flex w-full items-center gap-2 rounded-full border border-violet-200 bg-white px-3 py-2 shadow-sm transition focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-200 md:w-[320px]">
@@ -46,7 +52,9 @@ export default function Navbar({ onAddProject }: NavbarProps) {
                 id="project-search"
                 name="search"
                 type="search"
-                placeholder="Search..."
+                placeholder="Search list..."
+                value={search}
+                onChange={(e) => onSearchChange(e.target.value)}
                 className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
               />
             </div>

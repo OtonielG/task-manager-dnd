@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Navbar from "./components/Navbar";
 import ProjectsArea from "./components/ProjectsArea";
 import type { Column, Id } from "./types";
@@ -6,7 +6,11 @@ import { arrayMove } from "@dnd-kit/sortable";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 
 function App() {
-  const [columns, setColumns] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([
+    { id: crypto.randomUUID(), title: "List 1" },
+  ]);
+
+  const [search, setSearch] = useState("");
 
   function createColumn() {
     const newColumn: Column = {
@@ -25,7 +29,6 @@ function App() {
     setColumns((prev) => {
       const newColumns = prev.map((col) => {
         if (col.id !== id) return col;
-
         return { ...col, title };
       });
 
@@ -41,12 +44,23 @@ function App() {
     });
   }
 
+  const filteredColumns = useMemo(() => {
+    return columns.filter((column) =>
+      column.title.toLowerCase().includes(search.toLowerCase().trim()),
+    );
+  }, [columns, search]);
+
   return (
     <div className="flex h-dvh w-full flex-col bg-slate-50">
-      <Navbar onAddProject={createColumn} />
-      <div className="flex-1 flex items-center">
+      <Navbar
+        onAddProject={createColumn}
+        search={search}
+        onSearchChange={setSearch}
+      />
+
+      <div className="flex flex-1">
         <ProjectsArea
-          columns={columns}
+          columns={filteredColumns}
           deleteColumn={deleteColumn}
           handleChange={handleChange}
           updateColumn={updateColumn}
