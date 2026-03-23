@@ -36,6 +36,9 @@ type ProjectsAreaProps = {
   deleteColumn: (id: Id) => void;
   handleChange: (activeId: UniqueIdentifier, overId: UniqueIdentifier) => void;
   updateColumn: (id: Id, title: string) => void;
+  createTask: (columnId: Id) => void;
+  deleteTask: (columnId: Id, taskId: Id) => void;
+  updateTask: (columnId: Id, taskId: Id, content: string) => void;
   sort: SortValue;
   onSortChange: (value: SortValue) => void;
 };
@@ -45,6 +48,9 @@ export default function ProjectsArea({
   deleteColumn,
   handleChange,
   updateColumn,
+  createTask,
+  deleteTask,
+  updateTask,
   sort,
   onSortChange,
 }: ProjectsAreaProps) {
@@ -134,6 +140,9 @@ export default function ProjectsArea({
                     column={column}
                     deleteColumn={deleteColumn}
                     updateColumn={updateColumn}
+                    createTask={createTask}
+                    deleteTask={deleteTask}
+                    updateTask={updateTask}
                   />
                 </li>
               ))}
@@ -147,6 +156,9 @@ export default function ProjectsArea({
               column={activeColumn}
               deleteColumn={deleteColumn}
               updateColumn={updateColumn}
+              createTask={createTask}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
             />
           ) : null}
         </DragOverlay>

@@ -1,4 +1,4 @@
-import type { Column, Id, Task } from "../types";
+import type { Column, Id } from "../types";
 import DeleteIcon from "../assets/deleteIcon.svg?react";
 import PlusIcon from "../assets/plusIcon.svg?react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -10,15 +10,20 @@ interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
+  createTask: (columnId: Id) => void;
+  deleteTask: (columnId: Id, taskId: Id) => void;
+  updateTask: (columnId: Id, taskId: Id, content: string) => void;
 }
 
 export default function TaskContainer({
   column,
   deleteColumn,
   updateColumn,
+  createTask,
+  deleteTask,
+  updateTask,
 }: Props) {
   const [editTitle, setEditTitle] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
 
   const {
     setNodeRef,
@@ -51,35 +56,6 @@ export default function TaskContainer({
     );
   }
 
-  function createTask() {
-    const NewTask: Task = {
-      id: crypto.randomUUID(),
-      content: `Task ${tasks.length + 1}`,
-    };
-
-    setTasks((prev) => {
-      return [...prev, NewTask];
-    });
-
-    console.log(tasks);
-  }
-
-  function deleteTask(id: Id) {
-    setTasks((prev) => {
-      const filteredTasks = prev.filter((task) => task.id !== id);
-      return filteredTasks;
-    });
-  }
-
-  function updateTask(id: Id, content: string) {
-    setTasks((prev) =>
-      prev.map((task) => {
-        if (task.id !== id) return task;
-        return { ...task, content };
-      }),
-    );
-  }
-
   function formatCreatedAt(createdAt: number) {
     return new Intl.DateTimeFormat("en-US", {
       month: "short",
@@ -101,10 +77,10 @@ export default function TaskContainer({
       >
         <div className="flex-1 flex min-w-0 items-center gap-3">
           <span
-            aria-label="0 tasks"
+            aria-label={`${column.tasks.length} tasks`}
             className="flex size-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
           >
-            {tasks.length}
+            {column.tasks.length}
           </span>
 
           <h2
@@ -154,12 +130,14 @@ export default function TaskContainer({
         className="flex flex-1 min-h-0 px-4 py-4"
       >
         <ul className="flex w-full flex-1 min-h-0 flex-col gap-2 overflow-y-auto overflow-x-hidden rounded-xl border border-dashed border-slate-200 bg-slate-50 p-1 text-sm">
-          {tasks.map((task) => (
+          {column.tasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
+              deleteTask={(taskId) => deleteTask(column.id, taskId)}
+              updateTask={(taskId, content) =>
+                updateTask(column.id, taskId, content)
+              }
             />
           ))}
         </ul>
@@ -167,7 +145,7 @@ export default function TaskContainer({
 
       <footer className="flex justify-between items-center border-t border-slate-100 px-4 py-3 text-sm text-slate-500">
         <button
-          onClick={createTask}
+          onClick={() => createTask(column.id)}
           className="h-full flex items-center gap-2 hover:text-violet-600 cursor-pointer"
         >
           <PlusIcon className="size-8" />
