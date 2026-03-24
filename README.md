@@ -114,9 +114,10 @@ When dragging a column, a `DragOverlay` renders a visual clone instead of mutati
  
 ---
  
-## 📸 Screenshots
- 
-> *Add screenshots or a GIF of the app here to make this README shine! Tools: [ScreenToGif](https://www.screentogif.com/), [Loom](https://www.loom.com/)*
+## 📸 Preview
+
+### Drag and Drop Demo
+![TaskSpace Demo](./public/screenshots/taskspace-demo.gif)
 
 ---
  
